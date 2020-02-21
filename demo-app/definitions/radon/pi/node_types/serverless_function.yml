@@ -1,0 +1,31 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+description: RADON definitions for PI serverless function
+
+data_types:
+  radon.datatypes.ServerlessFunction.Entries:
+    derived_from: tosca.datatypes.Root
+    properties:
+      execute:
+        type: radon.datatypes.Entry
+
+node_types:
+  radon.nodes.ServerlessFunction:
+    derived_from: radon.nodes.Root
+    properties:
+      type:
+        type: string
+        default: serverless-function
+        constraints:
+          - equal: serverless-function
+      entries:
+        type: radon.datatypes.ServerlessFunction.Entries
+        required: false
+    requirements:
+      - object_storage:
+          capability: radon.capabilities.ObjectStorage
+          relationship: radon.relationships.Access
+          occurrences: [ 0, UNBOUNDED ]
+    capabilities:
+      serverless_function:
+        type: radon.capabilities.ServerlessFunction

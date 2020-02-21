@@ -1,0 +1,18 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+description: Entry point for RADON definitions of all PI types
+
+imports:
+  - definitions/radon/pi/artifact_types.yml
+  - definitions/radon/pi/data_types.yml
+  - definitions/radon/pi/capability_types.yml
+  - definitions/radon/pi/relationship_types/root.yml
+  - definitions/radon/pi/relationship_types/access.yml
+  - definitions/radon/pi/relationship_types/invoke.yml
+  - definitions/radon/pi/node_types/root.yml
+  - definitions/radon/pi/node_types/workload.yml
+  - definitions/radon/pi/node_types/open_workload.yml
+  - definitions/radon/pi/node_types/closed_workload.yml
+  - definitions/radon/pi/node_types/object_storage.yml
+  - definitions/radon/pi/node_types/serverless_function.yml
+  - definitions/radon/pi/policy_types.yml

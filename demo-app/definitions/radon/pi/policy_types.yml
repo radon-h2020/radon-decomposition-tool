@@ -1,0 +1,46 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+description: RADON definitions of PI policy types
+
+policy_types:
+  radon.policies.Performance.AverageResponseTime:
+    derived_from: tosca.policies.Root
+    properties:
+      target_entry:
+        type: string
+        required: false
+      lower_bound:
+        description: Time in seconds
+        type: float
+        required: false
+        constraints:
+          - greater_or_equal: 0.0
+      upper_bound:
+        description: Time in seconds
+        type: float
+        required: false
+        constraints:
+          - greater_or_equal: 0.0
+
+  radon.policies.Performance.ResponseTimePercentile:
+    derived_from: tosca.policies.Root
+    properties:
+      target_entry:
+        type: string
+        required: false
+      rank:
+        type: integer
+        constraints:
+          - in_range: [ 1, 100 ]
+      lower_bound:
+        description: Time in seconds
+        type: float
+        required: false
+        constraints:
+          - greater_or_equal: 0.0
+      upper_bound:
+        description: Time in seconds
+        type: float
+        required: false
+        constraints:
+          - greater_or_equal: 0.0

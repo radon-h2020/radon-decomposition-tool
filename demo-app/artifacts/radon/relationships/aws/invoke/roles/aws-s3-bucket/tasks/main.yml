@@ -1,0 +1,11 @@
+---
+- name: "Put notification configuration of S3 bucket on AWS : {{ source_name }}"
+  vars:
+    notification_configuration: notification_configuration.json.j2
+    Id: "lambda-{{ target_name }}"
+    LambdaFunctionArn: "{{ target_arn }}"
+    Events: "{{ event_types }}"
+  command: >-
+    aws s3api put-bucket-notification-configuration
+      --bucket {{ source_name }}
+      --notification-configuration '{{ lookup('template', notification_configuration, convert_data=False) }}'

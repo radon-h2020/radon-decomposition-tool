@@ -1,0 +1,76 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+description: RADON definitions for AWS Lambda function
+
+node_types:
+  radon.nodes.AmazonWebServices.LambdaFunction:
+    derived_from: radon.nodes.ServerlessFunction
+    properties:
+      type:
+        type: string
+        default: aws-lambda-function
+        constraints:
+          - equal: aws-lambda-function
+      role_name:
+        type: string
+      role_description:
+        type: string
+      runtime:
+        type: string
+      handler:
+        type: string
+      memory:
+        description: Size in megabytes
+        type: integer
+        constraints:
+          - in_range: [ 128, 3008 ]
+      timeout:
+        description: Time in seconds
+        type: integer
+        constraints:
+          - in_range: [ 1, 900 ]
+      concurrency:
+        type: integer
+        required: false
+        constraints:
+          - greater_or_equal: 1
+    capabilities:
+      aws_lambda_function:
+        type: radon.capabilities.AmazonWebServices.LambdaFunction
+    requirements:
+      - aws_platform:
+          capability: radon.capabilities.AmazonWebServices.Platform
+          relationship: radon.relationships.AmazonWebServices.BasedOn
+      - aws_s3_bucket:
+          capability: radon.capabilities.AmazonWebServices.S3Bucket
+          relationship: radon.relationships.AmazonWebServices.Access
+          occurrences: [ 0, UNBOUNDED ]
+    interfaces:
+      Standard:
+        inputs:
+          aws_access_key_id:
+            default: { get_property: [ SELF, aws_based_on, access_key_id ] }
+          aws_secret_access_key:
+            default: { get_property: [ SELF, aws_based_on, secret_access_key ] }
+          aws_region:
+            default: { get_property: [ SELF, aws_based_on, region ] }
+          function_name:
+            default: { get_property: [ SELF, name ] }
+          function_role_name:
+            default: { get_property: [ SELF, role_name ] }
+          function_role_description:
+            default: { get_property: [ SELF, role_description ] }
+          function_runtime:
+            default: { get_property: [ SELF, runtime ] }
+          function_handler:
+            default: { get_property: [ SELF, handler ] }
+          function_memory:
+            default: { get_property: [ SELF, memory ] }
+          function_timeout:
+            default: { get_property: [ SELF, timeout ] }
+          function_concurrency:
+            default: { get_property: [ SELF, concurrency ] }
+          function_deployment_package:
+            default: { get_artifact: [ SELF, deployment_package ] }
+        create: artifacts/radon/nodes/aws/lambda-function/create.yml
+        delete: artifacts/radon/nodes/aws/lambda-function/delete.yml

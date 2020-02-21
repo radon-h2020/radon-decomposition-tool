@@ -1,0 +1,18 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+description: RADON definitions of root node
+
+node_types:
+  radon.nodes.Root:
+    derived_from: tosca.nodes.Root
+    attributes:
+      id:
+        type: string
+    properties:
+      type:
+        type: string
+        default: root
+        constraints:
+          - equal: root
+      name:
+        type: string

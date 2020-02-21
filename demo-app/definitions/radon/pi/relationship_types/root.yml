@@ -1,0 +1,22 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+description: RADON definitions of root relationship
+
+relationship_types:
+  radon.relationships.Root:
+    derived_from: tosca.relationships.Root
+    interfaces:
+      Configure:
+        inputs:
+          source_id:
+            default: { get_attribute: [ SOURCE, id ] }
+          source_type:
+            default: { get_property: [ SOURCE, type ] }
+          source_name:
+            default: { get_property: [ SOURCE, name ] }
+          target_id:
+            default: { get_attribute: [ SOURCE, id ] }
+          target_type:
+            default: { get_property: [ TARGET, type ] }
+          target_name:
+            default: { get_property: [ TARGET, name ] }

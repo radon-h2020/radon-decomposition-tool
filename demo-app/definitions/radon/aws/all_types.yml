@@ -1,0 +1,12 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+description: Entry point for RADON definitions of all AWS types
+
+imports:
+  - definitions/radon/aws/capability_types.yml
+  - definitions/radon/aws/relationship_types/based_on.yml
+  - definitions/radon/aws/relationship_types/access.yml
+  - definitions/radon/aws/relationship_types/invoke.yml
+  - definitions/radon/aws/node_types/platform.yml
+  - definitions/radon/aws/node_types/s3_bucket.yml
+  - definitions/radon/aws/node_types/lambda_function.yml

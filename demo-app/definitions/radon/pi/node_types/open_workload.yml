@@ -1,0 +1,15 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+description: RADON definitions for PI open workload
+
+node_types:
+  radon.nodes.OpenWorkload:
+    derived_from: radon.nodes.Workload
+    properties:
+      type:
+        type: string
+        default: open-workload
+        constraints:
+          - equal: open-workload
+      interarrival_time:
+        type: radon.datatypes.TimeRandomVariable

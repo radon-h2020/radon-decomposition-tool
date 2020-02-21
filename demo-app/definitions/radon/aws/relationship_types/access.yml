@@ -1,0 +1,26 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+description: RADON definitions for AWS access relationship
+
+relationship_types:
+  radon.relationships.AmazonWebServices.Access:
+    derived_from: radon.relationships.Access
+    valid_target_types:
+      - radon.capabilities.AmazonWebServices.S3Bucket
+    interfaces:
+      Configure:
+        inputs:
+          source_aws_access_key_id:
+            default: { get_property: [ SOURCE, aws_based_on, access_key_id ] }
+          source_aws_secret_access_key:
+            default: { get_property: [ SOURCE, aws_based_on, secret_access_key ] }
+          source_aws_region:
+            default: { get_property: [ SOURCE, aws_based_on, region ] }
+          target_aws_access_key_id:
+            default: { get_property: [ TARGET, aws_based_on, access_key_id ] }
+          target_aws_secret_access_key:
+            default: { get_property: [ TARGET, aws_based_on, secret_access_key ] }
+          target_aws_region:
+            default: { get_property: [ TARGET, aws_based_on, region ] }
+        add_target: artifacts/radon/relationships/aws/access/add_target.yml
+        add_source: artifacts/radon/relationships/aws/access/add_source.yml
