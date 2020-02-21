@@ -27,4 +27,4 @@ The repository provides a demo application example (thumbnail generation) based 
 2. Download the resultant model from the server:
 
 		curl -X GET http://ec2-108-128-104-167.eu-west-1.compute.amazonaws.com:9000/files/model.yml -o open_model.yml
-It is ***HIGHLY RECOMMENDED*** to use a different filename for each uploaded model, e.g. putting a UUID into the filename (`model_5da82fdc-ae4c-48c4-ab5f-369a9a4fdee3.yml`), so as to minimize the possibility of collisions between concurrent requests.
+It is ***HIGHLY RECOMMENDED*** to use a different filename for each uploaded model, e.g. putting a UUID into the filename (`model_5da82fdc-ae4c-48c4-ab5f-369a9a4fdee3.yml`), so as to minimize the possibility of collisions between concurrent requests. Last but ***MOST IMPORTANTLY***, do not upload a model with any sensitive information, e.g. a pair of AWS access key id and secrete access key. We currently cannot prevent other users from accessing your models in the server.

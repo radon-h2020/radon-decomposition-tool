@@ -4,13 +4,20 @@ imports:
   - definitions/radon/pi/all_types.yml
   - definitions/radon/aws/all_types.yml
 topology_template:
+  inputs:
+    aws_access_key_id:
+      type: string
+    aws_secret_access_key:
+      type: string
   node_templates:
     aws:
       type: radon.nodes.AmazonWebServices.Platform
       properties:
         name: radon-aws
-        access_key_id: AKIAQXVXB5JKWSFPHUVN
-        secret_access_key: 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
+        access_key_id:
+          get_input: aws_access_key_id
+        secret_access_key:
+          get_input: aws_secret_access_key
         region: eu-west-1
     clients:
       type: radon.nodes.ClosedWorkload
