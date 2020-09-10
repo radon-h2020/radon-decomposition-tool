@@ -1,26 +1,14 @@
-tosca_definitions_version: tosca_simple_yaml_1_0
+tosca_definitions_version: tosca_simple_yaml_1_3
 description: RADON model for the demo application
-imports:
-  - definitions/radon/pi/all_types.yml
-  - definitions/radon/aws/all_types.yml
 topology_template:
-  inputs:
-    aws_access_key_id:
-      type: string
-    aws_secret_access_key:
-      type: string
   node_templates:
     aws:
-      type: radon.nodes.AmazonWebServices.Platform
+      type: radon.nodes.aws.AwsPlatform
       properties:
         name: radon-aws
-        access_key_id:
-          get_input: aws_access_key_id
-        secret_access_key:
-          get_input: aws_secret_access_key
         region: eu-west-1
     clients:
-      type: radon.nodes.ClosedWorkload
+      type: radon.nodes.abstract.workload.ClosedWorkload
       properties:
         name: radon-clients
         population: 12
@@ -33,22 +21,22 @@ topology_template:
                 service_time:
                   mean: 0.001
                 bound_to_entry: true
-                call_pattern: deterministic
+                request_pattern: deterministic
               a2:
                 service_time:
                   mean: 10.0
               a3:
                 service_time:
                   mean: 0.001
-                call_pattern: deterministic
+                request_pattern: deterministic
               a4:
                 service_time:
                   mean: 0.001
-                call_pattern: deterministic
+                request_pattern: deterministic
               a5:
                 service_time:
                   mean: 0.001
-                call_pattern: deterministic
+                request_pattern: deterministic
             precedences:
               - type: sequence
                 pre_activities:
@@ -71,14 +59,16 @@ topology_template:
                 post_activities:
                   - a5
       requirements:
-        - object_storage:
+        - endpoint:
             node: uploads
-            relationship: clients_access_uploads
-        - object_storage:
+            relationship: clients_connects_to_uploads
+            capability: storage_endpoint
+        - endpoint:
             node: thumbnails
-            relationship: clients_access_thumbnails
+            relationship: clients_connects_to_thumbnails
+            capability: storage_endpoint
     uploads:
-      type: radon.nodes.AmazonWebServices.S3Bucket
+      type: radon.nodes.aws.AwsS3Bucket
       properties:
         name: radon-uploads
         entries:
@@ -88,21 +78,21 @@ topology_template:
                 service_time:
                   mean: 0.001
                 bound_to_entry: true
-                reply_to_entry: true
+                replies_to_entry: true
           put:
             activities:
               a1:
                 service_time:
                   mean: 0.001
                 bound_to_entry: true
-                reply_to_entry: true
+                replies_to_entry: true
               a2:
                 service_time:
-                  mean: 0.109
+                  mean: 0.104
               a3:
                 service_time:
                   mean: 0.001
-                call_pattern: deterministic
+                request_pattern: deterministic
             precedences:
               - type: sequence
                 pre_activities:
@@ -120,16 +110,18 @@ topology_template:
                 service_time:
                   mean: 0.001
                 bound_to_entry: true
-                reply_to_entry: true
+                replies_to_entry: true
       requirements:
-        - aws_platform:
+        - host:
             node: aws
-            relationship: uploads_based_on_aws
-        - aws_lambda_function:
+            relationship: uploads_hosted_on_aws
+            capability: host
+        - invoker:
             node: create_thumbnail
-            relationship: uploads_invoke_create_thumbnail
+            relationship: uploads_triggers_create_thumbnail
+            capability: invocable
     thumbnails:
-      type: radon.nodes.AmazonWebServices.S3Bucket
+      type: radon.nodes.aws.AwsS3Bucket
       properties:
         name: radon-thumbnails
         entries:
@@ -139,17 +131,17 @@ topology_template:
                 service_time:
                   mean: 0.001
                 bound_to_entry: true
-                reply_to_entry: true
+                replies_to_entry: true
           put:
             activities:
               a1:
                 service_time:
                   mean: 0.001
                 bound_to_entry: true
-                reply_to_entry: true
+                replies_to_entry: true
               a2:
                 service_time:
-                  mean: 0.109
+                  mean: 0.104
             precedences:
               - type: sequence
                 pre_activities:
@@ -162,37 +154,38 @@ topology_template:
                 service_time:
                   mean: 0.001
                 bound_to_entry: true
-                reply_to_entry: true
+                replies_to_entry: true
       requirements:
-        - aws_platform:
+        - host:
             node: aws
-            relationship: thumbnails_based_on_aws
+            relationship: thumbnails_hosted_on_aws
+            capability: host
     create_thumbnail:
-      type: radon.nodes.AmazonWebServices.LambdaFunction
+      type: radon.nodes.aws.AwsLambdaFunction
       properties:
         name: radon-create-thumbnail
-        role_name: AWSLambdaExecuteRole
-        role_description: Allows Lambda functions to call AWS services on your behalf.
-        runtime: nodejs8.10
         handler: index.handler
         memory: 128
-        timeout: 10
         concurrency: 1
+        runtime: nodejs10.x
+        statement_id: lambda-f15b7cb2-1cf5-47e7-bd41-8e7461293952
+        zip_file: create_thumbnail.zip
+        timeout: 8
         entries:
           execute:
             activities:
               a1:
                 service_time:
-                  mean: 0.001
+                  mean: 0.066
                 bound_to_entry: true
-                call_pattern: deterministic
+                request_pattern: deterministic
               a2:
                 service_time:
-                  mean: 3.607
+                  mean: 2.311
               a3:
                 service_time:
-                  mean: 0.001
-                call_pattern: deterministic
+                  mean: 0.083
+                request_pattern: deterministic
             precedences:
               - type: sequence
                 pre_activities:
@@ -205,94 +198,92 @@ topology_template:
                 post_activities:
                   - a3
       requirements:
-        - aws_platform:
+        - host:
             node: aws
-            relationship: create_thumbnail_based_on_aws
-        - aws_s3_bucket:
+            relationship: create_thumbnail_hosted_on_aws
+            capability: host
+        - endpoint:
             node: uploads
-            relationship: create_thumbnail_access_uploads
-        - aws_s3_bucket:
+            relationship: create_thumbnail_connects_to_uploads
+            capability: storage_endpoint
+        - endpoint:
             node: thumbnails
-            relationship: create_thumbnail_access_thumbnails
-      artifacts:
-        deployment_package:
-          type: radon.artifacts.Deployment.Zip
-          file: artifacts/user/create_thumbnail.zip
+            relationship: create_thumbnail_connects_to_thumbnails
+            capability: storage_endpoint
   relationship_templates:
-    uploads_based_on_aws:
-      type: radon.relationships.AmazonWebServices.BasedOn
-    thumbnails_based_on_aws:
-      type: radon.relationships.AmazonWebServices.BasedOn
-    create_thumbnail_based_on_aws:
-      type: radon.relationships.AmazonWebServices.BasedOn
-    clients_access_uploads:
-      type: radon.relationships.Access
+    uploads_hosted_on_aws:
+      type: tosca.relationships.HostedOn
+    thumbnails_hosted_on_aws:
+      type: tosca.relationships.HostedOn
+    create_thumbnail_hosted_on_aws:
+      type: tosca.relationships.HostedOn
+    clients_connects_to_uploads:
+      type: radon.relationships.ConnectsTo
       properties:
-        requests:
-          - source_activity: start.a1
+        interactions:
+          - type: synchronous
+            source_activity: start.a1
             target_entry: put
-            number_of_calls: 1.0
-            reply_mode: synchronous
+            number_of_requests: 1.0
             network_delay:
-              mean: 0.153
-          - source_activity: start.a4
+              mean: 0.197
+          - type: synchronous
+            source_activity: start.a4
             target_entry: delete
-            number_of_calls: 1.0
-            reply_mode: synchronous
+            number_of_requests: 1.0
             network_delay:
-              mean: 0.108
-    clients_access_thumbnails:
-      type: radon.relationships.Access
+              mean: 0.103
+    clients_connects_to_thumbnails:
+      type: radon.relationships.ConnectsTo
       properties:
-        requests:
-          - source_activity: start.a3
+        interactions:
+          - type: synchronous
+            source_activity: start.a3
             target_entry: get
-            number_of_calls: 1.0
-            reply_mode: synchronous
+            number_of_requests: 1.0
             network_delay:
-              mean: 0.076
-          - source_activity: start.a5
+              mean: 0.107
+          - type: synchronous
+            source_activity: start.a5
             target_entry: delete
-            number_of_calls: 1.0
-            reply_mode: synchronous
+            number_of_requests: 1.0
             network_delay:
               mean: 0.035
-    uploads_invoke_create_thumbnail:
-      type: radon.relationships.AmazonWebServices.Invoke
+    uploads_triggers_create_thumbnail:
+      type: radon.relationships.aws.AwsTriggers
       properties:
-        event_types:
-          - s3:ObjectCreated:*
-        requests:
-          - source_activity: put.a3
+        events: s3:ObjectCreated:*
+        interactions:
+          - type: asynchronous
+            source_activity: put.a3
             target_entry: execute
-            number_of_calls: 1.0
-            reply_mode: asynchronous
+            number_of_requests: 1.0
             network_delay:
-              mean: 0.264
-    create_thumbnail_access_uploads:
-      type: radon.relationships.AmazonWebServices.Access
+              mean: 1.019
+    create_thumbnail_connects_to_uploads:
+      type: radon.relationships.ConnectsTo
       properties:
-        requests:
-          - source_activity: execute.a1
+        interactions:
+          - type: synchronous
+            source_activity: execute.a1
             target_entry: get
-            number_of_calls: 1.0
-            reply_mode: synchronous
+            number_of_requests: 1.0
             network_delay:
-              mean: 0.099
-    create_thumbnail_access_thumbnails:
-      type: radon.relationships.AmazonWebServices.Access
+              mean: 0.022
+    create_thumbnail_connects_to_thumbnails:
+      type: radon.relationships.ConnectsTo
       properties:
-        requests:
-          - source_activity: execute.a3
+        interactions:
+          - type: synchronous
+            source_activity: execute.a3
             target_entry: put
-            number_of_calls: 1.0
-            reply_mode: synchronous
+            number_of_requests: 1.0
             network_delay:
-              mean: 0.136
+              mean: 0.045
   policies:
-    - create_thumbnail_average_response_time:
-        type: radon.policies.Performance.AverageResponseTime
+    - create_thumbnail_mean_response_time:
+        type: radon.policies.performance.MeanResponseTime
         properties:
-          upper_bound: 2.5
+          upper_bound: 1.5
         targets:
           - create_thumbnail
