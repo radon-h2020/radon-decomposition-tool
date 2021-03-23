@@ -1,0 +1,71 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+description: RADON model for a monolithic application
+topology_template:
+  node_templates:
+    Compute_0:
+      type: tosca.nodes.Compute
+    WebServer_0:
+      type: radon.nodes.abstract.WebServer
+      requirements:
+        - host:
+            node: Compute_0
+            relationship: con_HostedOn_0
+            capability: host
+    WebApplication_0:
+      type: radon.nodes.abstract.WebApplication
+      properties:
+        granularity: coarse-grained
+        entries:
+          uploadImage:
+            activities:
+              a1:
+                bound_to_entry: true
+                replies_to_entry: true
+          resizeImage:
+            activities:
+              a1:
+                bound_to_entry: true
+                replies_to_entry: true
+          downloadImage:
+            activities:
+              a1:
+                bound_to_entry: true
+                replies_to_entry: true
+          uploadVideo:
+            activities:
+              a1:
+                bound_to_entry: true
+                replies_to_entry: true
+          convertVideo:
+            activities:
+              a1:
+                bound_to_entry: true
+              a2: {}
+              a3:
+                replies_to_entry: true
+            precedences:
+              - type: sequence
+                pre_activities:
+                  - a1
+                post_activities:
+                  - a2
+              - type: sequence
+                pre_activities:
+                  - a2
+                post_activities:
+                  - a3
+          downloadVideo:
+            activities:
+              a1:
+                bound_to_entry: true
+                replies_to_entry: true
+      requirements:
+        - host:
+            node: WebServer_0
+            relationship: con_HostedOn_1
+            capability: host
+  relationship_templates:
+    con_HostedOn_0:
+      type: tosca.relationships.HostedOn
+    con_HostedOn_1:
+      type: tosca.relationships.HostedOn
