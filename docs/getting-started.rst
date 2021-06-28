@@ -1,14 +1,15 @@
 The decomposition tool has been made available on an Amazon EC2 instance with a RESTful API, which can be accessed through the URL: :code:`http://ec2-108-128-104-167.eu-west-1.compute.amazonaws.com:9000`. The next table summarizes RESTful endpoints exposed by this public access server.
 
-============================ ======== ========================== ============================ ============================================================ ==========================================
- Path                         Method   Parameters                 Body                         Response                                                     Description
-============================ ======== ========================== ============================ ============================================================ ==========================================
- :code:`/files/{filename}`    POST                                :code:`file: octet-stream`                                                                Upload a file to the server
- :code:`/files/{filename}`    GET                                                                                                                           Download a file from the server
- :code:`/files/{filename}`    DELETE                                                                                                                        Delete a file in the server
- :code:`/files`               GET                                                              :code:`filenames: string array`                              List all the files in the server
- :code:`/dec-tool/optimize`   PATCH    :code:`filename: string`                                :code:`total_cost: number`, :code:`measures: object array`   Optimize the deployment of a RADON model
-============================ ======== ========================== ============================ ============================================================ ==========================================
+============================= ======== ========================== ============================ ============================================================ =============================================
+ Path                          Method   Parameters                 Body                         Response                                                     Description
+============================= ======== ========================== ============================ ============================================================ =============================================
+ :code:`/files/{filename}`     POST                                :code:`file: octet-stream`                                                                Upload a file to the server
+ :code:`/files/{filename}`     GET                                                                                                                           Download a file from the server
+ :code:`/files/{filename}`     DELETE                                                                                                                        Delete a file in the server
+ :code:`/files`                GET                                                              :code:`filenames: string array`                              List all the files in the server
+ :code:`/dec-tool/decompose`   PATCH    :code:`filename: string`                                                                                             Decompose the architecture of a RADON model
+ :code:`/dec-tool/optimize`    PATCH    :code:`filename: string`                                :code:`total_cost: number`, :code:`measures: object array`   Optimize the deployment of a RADON model
+============================= ======== ========================== ============================ ============================================================ =============================================
 
 A demo application example (thumbnail generation) based on the definitions of TOSCA types specific to the decomposition tool is provided `here <https://github.com/radon-h2020/radon-decomposition-tool>`_. Two models are included in this example, one with an open workload and the other with a closed workload. To try the decomposition tool on the former, please perform the following steps:
 

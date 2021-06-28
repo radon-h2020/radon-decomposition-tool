@@ -19,6 +19,7 @@ The decomposition tool has been made available on an Amazon EC2 instance with a 
 | `/files/{filename}` | GET |  |  |  | Download a file from the server |
 | `/files/{filename}` | DELETE |  |  |  | Delete a file in the server |
 | `/files` | GET |  |  | `filenames: string array` | List all the files in the server |
+| `/dec-tool/decompose` | PATCH | `filename: string` |  |  | Decompose the architecture of a RADON model |
 | `/dec-tool/optimize` | PATCH | `filename: string` |  | `total_cost: number`, `measures: object array` | Optimize the deployment of a RADON model |
 
 ## Demo Application Example
