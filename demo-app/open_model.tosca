@@ -283,6 +283,6 @@ topology_template:
     - MeanResponseTime_0:
         type: radon.policies.performance.MeanResponseTime
         properties:
+          target_entries:
+            - AwsLambdaFunction_0.execute
           upper_bound: 1.5
-        targets:
-          - AwsLambdaFunction_0
