@@ -6,7 +6,7 @@
 | **Documentation** | [D3.2 – Decomposition Tool I](http://radon-h2020.eu/wp-content/uploads/2020/01/D3.2-Decomposition-Tool-I.pdf) |
 | **Stand-Alone Tutorial** | https://decomposition-tool.readthedocs.io/en/latest/ |
 | **Video** | https://youtu.be/ZHD0t8HK7K0 |
-| **Repository** | <ul><li>https://github.com/radon-h2020/radon-decomposition-tool</li><li>https://github.com/radon-h2020/radon-decomposition-plugin</ul> |
+| **Repository** | <ul><li>https://github.com/radon-h2020/radon-decomposition-tool</li><li>https://github.com/radon-h2020/radon-decomposition-plugin</li><li>https://github.com/radon-h2020/radon-decomposition-enhancement</li></ul> |
 | **License** | [Imperial College's Intellectual Property](https://www.imperial.ac.uk/enterprise/business/industry-partnerships-and-commercialisation/technology-licensing/) |
 | **Contact**| <ul><li>Lulai Zhu ([@zhululai](https://github.com/zhululai))</li><li>Giuliano Casale ([@gcasale](https://github.com/gcasale))</li></ul> |
 
@@ -15,12 +15,12 @@ The decomposition tool has been made available on an Amazon EC2 instance with a 
 
 | Path | Method | Parameters | Body | Response | Description |
 | --- | --- | --- | --- | --- | --- |
-| `/files/{filename}` | POST |  | `file: octet-stream` |  | Upload a file to the server |
-| `/files/{filename}` | GET |  |  |  | Download a file from the server |
-| `/files/{filename}` | DELETE |  |  |  | Delete a file in the server |
-| `/files` | GET |  |  | `filenames: string array` | List all the files in the server |
-| `/dec-tool/decompose` | PATCH | `filename: string` |  |  | Decompose the architecture of a RADON model |
-| `/dec-tool/optimize` | PATCH | `filename: string` |  | `total_cost: number`, `measures: object array` | Optimize the deployment of a RADON model |
+| `/file/{filename}` | POST |  | `file: octet-stream` |  | Upload a file to the server |
+| `/file/{filename}` | GET |  |  |  | Download a file from the server |
+| `/file/{filename}` | DELETE |  |  |  | Delete a file in the server |
+| `/dec-tool/decompose` | PATCH | `model_filename: string` |  |  | Decompose the architecture of a RADON model |
+| `/dec-tool/optimize` | PATCH | `model_filename: string` |  | `total_cost: number`, `measures: object array` | Optimize the deployment of a RADON model |
+| `/dec-tool/enhance` | PATCH | `model_filename: string`, `data_filename: string` |  |  | Enhance the accuracy of a RADON model |
 
 ## Demo Application Example
 A demo application example (thumbnail generation) based on the definitions of TOSCA types specific to the decomposition tool is provided here. Two RADON models are included in this example, one with an open workload and the other with a closed workload. To try the decomposition tool on the former, please perform the following steps:
