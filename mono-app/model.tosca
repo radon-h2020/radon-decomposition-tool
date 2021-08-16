@@ -25,7 +25,20 @@ topology_template:
             activities:
               a1:
                 bound_to_entry: true
+              a2: {}
+              a3:
                 replies_to_entry: true
+            precedences:
+              - type: sequence
+                pre_activities:
+                  - a1
+                post_activities:
+                  - a2
+              - type: sequence
+                pre_activities:
+                  - a2
+                post_activities:
+                  - a3
           downloadImage:
             activities:
               a1:
