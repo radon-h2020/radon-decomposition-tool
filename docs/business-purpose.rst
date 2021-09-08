@@ -6,4 +6,4 @@ The *decomposition tool* aims to help software developers in finding the optimal
 
 - *Accuracy Enhancement*: It can also be used to enhance the accuracy of performance annotations in a TOSCA model according to runtime monitoring data so that a better decomposition or optimization result may be achieved afterwards. This enables an iterative lifecycle for developing the application.
 
-- *Assignment Consolidation*: Additionally, it is used to consolidate the assignment of container applications in a TOSCA model by learning from runtime experiment data, and the job inteferences among the component microservices is thus minimized on the available compute nodes.
+- *Assignment/Consolidation*: Additionally, it is used to consolidate the assignment of container applications in a TOSCA model by learning from runtime experiment data, and the job inteferences among the component microservices is thus minimized on the available compute nodes.
